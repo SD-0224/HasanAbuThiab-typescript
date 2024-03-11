@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
 import { promisify } from 'util';
+import { isValidImageType } from '../utils/imageValidator';
+import errorHandler from '../utils/errorHandler';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -18,6 +20,12 @@ const handleFile = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(400).render('uploadForm', { error: 'No file uploaded.' });
     }
 
+    // Validate file type 
+    if (!isValidImageType(req.file.mimetype)) {
+      // Render the upload form with an error message
+      return res.status(400).render('uploadForm', { error: 'Invalid file type. Please upload an image (JPEG, PNG, GIF).' });
+    }
+
     // Your asynchronous file handling logic here
     const originalFileName = path.parse(req.file.originalname).name;
     const uniqueFilename = `${Date.now()}-${originalFileName}${path.extname(req.file.originalname)}`;
@@ -30,7 +38,7 @@ const handleFile = async (req: Request, res: Response, next: NextFunction) => {
   } catch (error) {
     // Render the upload form with an error message
     console.error(error);
-    return res.status(500).render('uploadForm', { error: 'Something went wrong.' });
+    next(errorHandler);
   }
 };
 
