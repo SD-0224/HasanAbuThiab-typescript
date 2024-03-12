@@ -14,7 +14,7 @@ app.use(morgan('combined', { stream: accessLogStream }));
 
 // Middleware
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '../public'))); // Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, '../public'))); 
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 // Routes

@@ -1,7 +1,6 @@
 import app from './app';
 import path from 'path';
 
-// Set EJS as the view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname,'../public', 'views'));
 

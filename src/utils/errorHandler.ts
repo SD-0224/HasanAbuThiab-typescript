@@ -56,7 +56,6 @@ const errorHandler = (err: any,req:Request, res: Response,  next: NextFunction) 
       res.status(500).render('uploadForm', { error: 'Error uploading file. Please try again.' });
     }
   } else {
-    // Generic error handling for other endpoints
     res.status(500).json({ error: "Internal Server Error" });
     }
 

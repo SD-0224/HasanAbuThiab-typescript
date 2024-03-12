@@ -4,11 +4,11 @@ async function resizeImage(filename) {
 
     try {
       const response = await fetch(`/resize/${filename}`, {
-        method: 'PUT', // Using PUT method
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ width, height }), // Sending width and height as JSON in the request body
+        body: JSON.stringify({ width, height }), 
       });
   
       if (!response.ok) {
@@ -17,9 +17,7 @@ async function resizeImage(filename) {
   
       console.log('Image resized successfully');
       window.location.href = "/";
-      // Handle success as needed
     } catch (error) {
       console.error('Error resizing image:', error.message);
-      // Handle errors as needed
     }
   }
