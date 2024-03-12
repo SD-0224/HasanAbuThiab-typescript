@@ -5,7 +5,7 @@ import path from 'path';
 import { promisify } from 'util';
 import { isValidImageType } from '../utils/imageValidator';
 import errorHandler from '../utils/errorHandler';
-
+import fs from 'fs';  
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -42,4 +42,16 @@ const handleFile = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { uploadImage, handleFile };
+const getImageList = async (req: Request, res: Response, next:NextFunction) => {
+  const dataDir = path.join(__dirname, '..', '../public', 'data');
+  try {
+    const files = await fs.promises.readdir(dataDir);
+    const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
+    res.render('index', { images: imageFiles });
+  } catch (error) {
+    console.error('Error reading images:', error);
+    next(errorHandler)
+  }
+};
+
+export { uploadImage, handleFile, getImageList };

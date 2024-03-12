@@ -15,16 +15,22 @@ const handleFileUploadError = (err: multer.MulterError, res:Response) => {
     }
 };
 
-const errorHandler = (err: any, res: Response, next: NextFunction) => {
+const errorHandler = (err: any,req:Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
 
-  if (err instanceof multer.MulterError) {
-    // Handle Multer errors
-    handleFileUploadError(err, res);
+  if (req.url === '/api/upload') {
+    if (err instanceof multer.MulterError) {
+      // Handle Multer errors for upload endpoint
+      handleFileUploadError(err, res);
+    } else {
+      // Generic error handling for upload endpoint
+      res.status(500).render('uploadForm', { error: 'Error uploading file. Please try again.' });
+    }
   } else {
-    // Generic error handling
-    res.status(500).render('uploadForm', { error: 'Something went wrong.' });
-}
+    // Generic error handling for other endpoints
+    res.status(500).render('error', { error: 'Internal Server Error' });
+  }
+
   next();
 };
 

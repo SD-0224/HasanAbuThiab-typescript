@@ -1,0 +1,27 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles/style.css">
+
+  <title>Image List</title>
+</head>
+<body>
+  <h1>Image List</h1>
+  <ul>
+    <% images.forEach(image => { %>
+    <li>
+      <a><%= image %></a>
+      <img src="../data/<%= image %>" alt="<%= image %>" />
+      <a href="/api/crop/<%= image %>"><button>Crop</button></a>
+      <a href="/api/resize/<%= image %>"><button>Resize</button></a>
+
+      <a href="/api/download/<%= image %>"><button>Download</button></a>
+      
+    </li>
+    <% }); %>
+  </ul>
+  </ul>
+  <a href="/api/upload"><button>Create New File</button></a>
+</body>
+</html>
