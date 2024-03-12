@@ -10,12 +10,11 @@ async function resizeImage(filename) {
         },
         body: JSON.stringify({ width, height }), 
       });
-  
+      console.log('Image resized successfully');
+
       if (!response.ok) {
         throw new Error('Image resize failed. Please try again.');
       }
-  
-      console.log('Image resized successfully');
       window.location.href = "/";
     } catch (error) {
       console.error('Error resizing image:', error.message);

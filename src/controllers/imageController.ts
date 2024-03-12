@@ -30,11 +30,10 @@ const handleFile = async (req: Request, res: Response, next: NextFunction) => {
     const imagePath = path.join(__dirname, '..', '../public', 'data', uniqueFilename);
 
     await writeFileAsync(imagePath, req.file.buffer);
-
-    res.status(200).send('File uploaded successfully');
-  } catch (error) {
-    console.error(error);
-    next(errorHandler);
+    res.redirect('/');
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
 };
 
@@ -44,9 +43,9 @@ const getImageList = async (req: Request, res: Response, next:NextFunction) => {
     const files = await fs.promises.readdir(dataDir);
     const imageFiles = files.filter(file => /\.(jpg|jpeg|png|gif)$/i.test(file));
     res.render('index', { images: imageFiles });
-  } catch (error) {
-    console.error('Error reading images:', error);
-    next(errorHandler)
+  } catch (err) {
+    console.error('Error reading images:', err);
+    next(err)
   }
 };
 
@@ -77,7 +76,7 @@ const resizeImage = async (req: Request, res: Response, next: NextFunction) => {
   catch (err)
   {
     console.error('Error cropping image');
-    next(errorHandler);
+    next(err);
   }
 }
 export { uploadImage, handleFile, getImageList,resizeImage,renderResizeForm };
