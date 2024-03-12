@@ -13,15 +13,15 @@
     <li>
       <a><%= image %></a>
       <img src="../data/<%= image %>" alt="<%= image %>" />
-      <a href="/api/crop/<%= image %>"><button>Crop</button></a>
-      <a href="/api/resize/<%= image %>"><button>Resize</button></a>
+      <a href="/crop/<%= image %>"><button>Crop</button></a>
+      <a href="/resize/<%= image %>"><button>Resize</button></a>
 
-      <a href="/api/download/<%= image %>"><button>Download</button></a>
+      <a href="/download/<%= image %>"><button>Download</button></a>
       
     </li>
     <% }); %>
   </ul>
   </ul>
-  <a href="/api/upload"><button>Create New File</button></a>
+  <a href="/upload"><button>Create New File</button></a>
 </body>
 </html>

@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, '../public'))); // Serve static file
 app.get('/favicon.ico', (req, res) => res.status(204).end());
 
 // Routes
-app.use('/api', imageRoutes);
+app.use(imageRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

@@ -3,9 +3,11 @@ import { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
 import { promisify } from 'util';
-import { isValidImageType } from '../utils/imageValidator';
+import { isValidImageType, validateInputs } from '../utils/imageValidator';
 import errorHandler from '../utils/errorHandler';
 import fs from 'fs';  
+import sharp from 'sharp';
+
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -54,4 +56,34 @@ const getImageList = async (req: Request, res: Response, next:NextFunction) => {
   }
 };
 
-export { uploadImage, handleFile, getImageList };
+const renderResizeForm = (req: Request, res: Response) => {
+  const { imageName } = req.params;
+  res.render('resizeForm', { imageName });
+};
+
+const resizeImage = async (req: Request, res: Response, next: NextFunction) => {
+  
+  const { imageName } = req.params;
+  const { width, height } = req.body;
+  const validationError = validateInputs(imageName, width, height);
+  if (validationError) {
+  console.log(validationError);
+  return res.status(400).render('resizeForm', { error: validationError });
+}
+  const imagePath = path.join(__dirname,'..', '../public', 'data', imageName);
+  try
+  {
+    const originalImageBuffer = fs.readFileSync(imagePath);
+    const resizedImageBuffer = await sharp(originalImageBuffer)
+    .resize({ width: parseInt(width as string), height: parseInt(height as string) })
+    .toBuffer();
+    await writeFileAsync(imagePath, resizedImageBuffer);
+    res.status(200).send('Image resized successfully');
+  }
+  catch (err)
+  {
+    console.error('Error cropping image');
+    next(errorHandler);
+  }
+}
+export { uploadImage, handleFile, getImageList,resizeImage,renderResizeForm };
