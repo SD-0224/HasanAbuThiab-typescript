@@ -5,25 +5,21 @@ const errorHandler = (
   err: any,
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   console.error(err.stack);
-  let errorMessage: string
+  let errorMessage: string;
   switch (err.code) {
     case "LIMIT_FILE_SIZE":
-      res
-        .status(400)
-        .render("uploadForm", {
-          error: "File size is too large. Maximum size allowed is 5MB.",
-        });
+      res.status(400).render("uploadForm", {
+        error: "File size is too large. Maximum size allowed is 5MB.",
+      });
 
       break;
     case "LIMIT_UNEXPECTED_FILE":
-      res
-        .status(400)
-        .render("uploadForm", {
-          error: "Unexpected field. Please check your form data.",
-        });
+      res.status(400).render("uploadForm", {
+        error: "Unexpected field. Please check your form data.",
+      });
       break;
     case "ENOENT":
       errorMessage = "File not found.";

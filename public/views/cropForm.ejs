@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../styles/style.css" />
 
     <title>Crop Image Form</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Crop Image</h1>
     <form>
-        <input type="hidden" name="imageName" value="<%= imageName %>">
-        <label for="x">X Coordinate:</label>
-        <input type="number" id="x" name="x" required>
-        <br>
-        <label for="y">Y Coordinate:</label>
-        <input type="number" id="y" name="y" required>
-        <br>
-        <label for="width">Width:</label>
-        <input type="number" id="width" name="width" required>
-        <br>
-        <label for="height">Height:</label>
-        <input type="number" id="height" name="height" required>
-        <br>
-        <button type="button" onclick="cropImage('<%= imageName %>')">Crop Image</button>
+      <input type="hidden" name="imageName" value="<%= imageName %>" />
+      <label for="x">X Coordinate:</label>
+      <input type="number" id="x" name="x" required />
+      <br />
+      <label for="y">Y Coordinate:</label>
+      <input type="number" id="y" name="y" required />
+      <br />
+      <label for="width">Width:</label>
+      <input type="number" id="width" name="width" required />
+      <br />
+      <label for="height">Height:</label>
+      <input type="number" id="height" name="height" required />
+      <br />
+      <button type="button" onclick="cropImage('<%= imageName %>')">
+        Crop Image
+      </button>
     </form>
-</body>
-<script src="../scripts.js"></script>
-
+  </body>
+  <script src="../scripts.js"></script>
 </html>

@@ -38,7 +38,7 @@ async function cropImage(filename) {
 
     if (response.ok) {
       console.log("Image cropped successfully");
-      window.location.href = "/"; 
+      window.location.href = "/";
     } else {
       throw new Error("Image crop failed. Please try again.");
     }

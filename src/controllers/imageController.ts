@@ -181,6 +181,31 @@ const applyGreyScale = async(req:Request, res:Response) => {
     throw err;
   }
 }
+
+const downloadImage = async (req:Request, res:Response) => {
+  const imgName = req.params.imageName;
+  try {
+    if (!imgName || typeof imgName !== 'string') {
+       return res.status(400).send({ error: "Invalid image name." });
+     }
+    const imagePath = path.join(__dirname, "..", "../public", "data", imgName);
+
+    // Check if the file exists
+    await fs.promises.access(imagePath);
+
+    // Set appropriate headers for file download
+    res.setHeader("Content-disposition", `attachment; filename=${imgName}`);
+    res.setHeader("Content-type", "text/plain"); 
+
+    // Create a readable stream from the file and pipe it to the response
+    const fileStream = fs.createReadStream(imagePath);
+    fileStream.pipe(res);
+  } catch (err) {
+    console.error("Error downloading file:", err);
+    throw err;
+
+  }
+}
 export {
   uploadImage,
   handleFile,
@@ -192,5 +217,6 @@ export {
   renderWaterMarkForm,
   waterMarkImage,
   applyGreyScale,
+  downloadImage,
   
 };

@@ -8,10 +8,13 @@
   </head>
   <body>
     <h1>Image Upload</h1>
-    <form action="/watermark/<%=imageName%>" method="post" enctype="multipart/form-data">
-      <input type="file" name="image" accept="image/*" required/>
+    <form
+      action="/watermark/<%=imageName%>"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <input type="file" name="image" accept="image/*" required />
       <button type="submit">Upload</button>
     </form>
-
   </body>
 </html>

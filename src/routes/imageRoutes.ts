@@ -10,6 +10,7 @@ import {
   renderWaterMarkForm,
   waterMarkImage,
   applyGreyScale,
+  downloadImage,
 } from "../controllers/imageController";
 
 const router = express.Router();
@@ -26,7 +27,7 @@ router.put("/resize/:imageName", resizeImage);
 
 router.get("/watermark/:imageName", renderWaterMarkForm)
 router.post("/watermark/:imageName",uploadImage, waterMarkImage)
-
+router.get("/download/:imageName",downloadImage )
 router.put("/grey/:imageName", applyGreyScale)
 router.post("/upload", uploadImage, handleFile);
 
