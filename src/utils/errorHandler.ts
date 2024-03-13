@@ -1,7 +1,14 @@
 import multer from "multer";
 import { Response, NextFunction } from "express";
 
-const handleFileUploadError = (err: multer.MulterError, res: Response) => {
+const errorHandler = (
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  console.error(err.stack);
+  let errorMessage: string
   switch (err.code) {
     case "LIMIT_FILE_SIZE":
       res
@@ -18,14 +25,6 @@ const handleFileUploadError = (err: multer.MulterError, res: Response) => {
           error: "Unexpected field. Please check your form data.",
         });
       break;
-    default:
-      res.status(500).render("uploadForm", { error: "Something went wrong.." });
-  }
-};
-const handleResizeError = (err: any, res: Response) => {
-  let errorMessage: string;
-
-  switch (err.code) {
     case "ENOENT":
       errorMessage = "File not found.";
       res.status(404).json({ error: errorMessage });
@@ -48,30 +47,7 @@ const handleResizeError = (err: any, res: Response) => {
       res.status(500).json({ error: errorMessage });
       break;
   }
-};
-const errorHandler = (
-  err: any,
-  req: Request,
-  res: Response,
-) => {
-  console.error(err.stack);
-  if (req.url.startsWith("/resize")) {
-    handleResizeError(err, res);
-  } else if (req.url.startsWith("/upload")) {
-    if (err instanceof multer.MulterError) {
-      // Handle Multer errors for upload endpoint
-      handleFileUploadError(err, res);
-    } else {
-      // Generic error handling for upload endpoint
-      res
-        .status(500)
-        .render("uploadForm", {
-          error: "Error uploading file. Please try again.",
-        });
-    }
-  } else {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+  next();
 };
 
 export = errorHandler;

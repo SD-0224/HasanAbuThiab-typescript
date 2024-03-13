@@ -16,6 +16,7 @@
       <a href="/crop/<%= image %>"><button>Crop</button></a>
       <a href="/resize/<%= image %>"><button>Resize</button></a>
       <a href="/watermark/<%= image %>"><button>watermark</button></a>
+      <button  onclick="applyGreyScale('<%= image %>')">grey</button>
 
       <a href="/download/<%= image %>"><button>Download</button></a>
       
@@ -25,4 +26,5 @@
   </ul>
   <a href="/upload"><button>Create New File</button></a>
 </body>
+<script src="../scripts.js"></script>
 </html>

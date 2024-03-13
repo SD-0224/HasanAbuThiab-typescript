@@ -46,24 +46,43 @@ async function cropImage(filename) {
     console.error("Error cropping image:", error.message);
   }
 }
-// async function applyWaterMark(filename) {
-//   const watermarkImage = document.getElementById("watermarkimage").files[0]; // Get the watermark image file
-//   try {
-//     const response = await fetch(`/watermark/${filename}`, {
-//       method: "PUT",
-//       headers: {
-//         "Content-Type": "image/png", // Adjust content type as needed
-//       },
-//       body: watermarkImage,
-//     });
+async function resizeImage(filename) {
+  const width = document.getElementById("width").value;
+  const height = document.getElementById("height").value;
 
-//     if (response.ok) {
-//       console.log("Watermark applied successfully");
-//       window.location.href = "/";
-//     } else {
-//       throw new Error("Watermark application failed. Please try again.");
-//     }
-//   } catch (error) {
-//     console.error("Error applying watermark:", error.message);
-//   }
-// }
+  try {
+    const response = await fetch(`/resize/${filename}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ width, height }),
+    });
+    console.log("Image resized successfully");
+
+    if (!response.ok) {
+      throw new Error("Image resize failed. Please try again.");
+    }
+    window.location.href = "/";
+  } catch (error) {
+    console.error("Error resizing image:", error.message);
+  }
+}
+
+async function applyGreyScale(filename) {
+  try {
+    const response = await fetch(`/grey/${filename}`, {
+      method: "PUT",
+    });
+
+    if (response.ok) {
+      console.log("Greyscale applied successfully");
+      window.location.href = "/"; // Redirect to home page
+    } else {
+      throw new Error("Greyscale application failed. Please try again.");
+    }
+    window.location.reload();
+  } catch (error) {
+    console.error("Error applying greyscale:", error.message);
+  }
+}

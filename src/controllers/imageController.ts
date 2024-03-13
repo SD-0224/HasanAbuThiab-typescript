@@ -46,7 +46,7 @@ const handleFile = async (req: Request, res: Response): Promise<void> => {
     res.redirect("/");
   } catch (err) {
     console.error(err);
-    errorHandler(err, req, res);
+    throw err;
   }
 };
 
@@ -60,7 +60,7 @@ const getImageList = async (req: Request, res: Response): Promise<void> => {
     res.render("index", { images: imageFiles });
   } catch (err) {
     console.error("Error reading images:", err);
-    errorHandler(err, req, res);
+    throw err;
   }
 };
 
@@ -83,7 +83,7 @@ const resizeImage = async (req: Request, res: Response): Promise<void> => {
     res.status(200).send("Image resized successfully");
   } catch (err) {
     console.error("Error cropping image");
-    errorHandler(err, req, res);
+    throw err;
   }
 };
 
@@ -114,7 +114,7 @@ const cropImage = async (req: Request, res: Response) => {
     res.status(200).send("Image cropped successfully!");
   } catch (err) {
     console.error("Error cropping image:", err);
-    errorHandler(err, req, res);
+    throw err;
   }
 };
 
@@ -124,7 +124,13 @@ const renderWaterMarkForm = (req: Request, res: Response) => {
 };
 const waterMarkImage = async (req: Request, res: Response): Promise<void> => {
   const imageName = req.params.imageName; 
-  console.log(req.file)
+  const imagePath = path.join(__dirname, "..", "../public", "data", imageName);
+
+  try {
+    await fs.promises.access(imagePath, fs.constants.F_OK);
+  } catch (error) {
+    return res.status(400).send({error:"Image file does not exist."});
+  }
 
   try {
     if (!req.file) {
@@ -136,16 +142,45 @@ const waterMarkImage = async (req: Request, res: Response): Promise<void> => {
     if (!isValidImageType(req.file.mimetype)) {
       return res.status(400).send({ error: "File type not valid." });
     }
-      const imagePath = path.join(__dirname, "..", "../public", "data", imageName);
-      console.log(imagePath)
+    
       await applyWatermark(imagePath, req.file.buffer);
 
       res.redirect('/');
   } catch (err) {
       console.error("Error in watermarkController:", err);
-      errorHandler(err, req, res);
+      throw err;
     }
 };
+const applyGreyScale = async(req:Request, res:Response) => {
+  const {imageName} = req.params;
+  if (!imageName || typeof imageName !== 'string') {
+    return res.status(400).send({ error: "Invalid image name." });
+  }
+
+  const imagePath = path.join(__dirname, "..", "../public", "data", imageName);
+  try {
+    await fs.promises.access(imagePath, fs.constants.F_OK);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send({error:"Image file does not exist."});
+  }
+
+  try{
+    const originalImageBuffer = await fs.promises.readFile(imagePath);
+
+    // Apply greyscale effect
+    const greyscaleImageBuffer = await sharp(originalImageBuffer)
+        .greyscale()
+        .toBuffer();
+    // Write the greyscaled image buffer back to the original file
+    await fs.promises.writeFile(imagePath, greyscaleImageBuffer);
+    res.status(200);
+  }
+  catch (err) {
+    console.error("Error in applyGreyScale:", err);
+    throw err;
+  }
+}
 export {
   uploadImage,
   handleFile,
@@ -156,4 +191,6 @@ export {
   cropImage,
   renderWaterMarkForm,
   waterMarkImage,
+  applyGreyScale,
+  
 };
