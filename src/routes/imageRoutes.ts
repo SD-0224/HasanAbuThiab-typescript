@@ -7,6 +7,8 @@ import {
   renderResizeForm,
   renderCropForm,
   cropImage,
+  renderWaterMarkForm,
+  waterMarkImage,
 } from "../controllers/imageController";
 
 const router = express.Router();
@@ -20,6 +22,9 @@ router.put("/crop/:imageName", cropImage);
 
 router.get("/resize/:imageName", renderResizeForm);
 router.put("/resize/:imageName", resizeImage);
+
+router.get("/watermark/:imageName", renderWaterMarkForm)
+router.post("/watermark/:imageName",uploadImage, waterMarkImage)
 
 router.post("/upload", uploadImage, handleFile);
 

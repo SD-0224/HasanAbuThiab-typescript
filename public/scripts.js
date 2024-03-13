@@ -46,3 +46,24 @@ async function cropImage(filename) {
     console.error("Error cropping image:", error.message);
   }
 }
+// async function applyWaterMark(filename) {
+//   const watermarkImage = document.getElementById("watermarkimage").files[0]; // Get the watermark image file
+//   try {
+//     const response = await fetch(`/watermark/${filename}`, {
+//       method: "PUT",
+//       headers: {
+//         "Content-Type": "image/png", // Adjust content type as needed
+//       },
+//       body: watermarkImage,
+//     });
+
+//     if (response.ok) {
+//       console.log("Watermark applied successfully");
+//       window.location.href = "/";
+//     } else {
+//       throw new Error("Watermark application failed. Please try again.");
+//     }
+//   } catch (error) {
+//     console.error("Error applying watermark:", error.message);
+//   }
+// }
