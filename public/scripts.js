@@ -20,3 +20,29 @@ async function resizeImage(filename) {
     console.error("Error resizing image:", error.message);
   }
 }
+
+async function cropImage(filename) {
+  const x = document.getElementById("x").value;
+  const y = document.getElementById("y").value;
+  const width = document.getElementById("width").value;
+  const height = document.getElementById("height").value;
+
+  try {
+    const response = await fetch(`/crop/${filename}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ x, y, width, height }),
+    });
+
+    if (response.ok) {
+      console.log("Image cropped successfully");
+      window.location.href = "/"; 
+    } else {
+      throw new Error("Image crop failed. Please try again.");
+    }
+  } catch (error) {
+    console.error("Error cropping image:", error.message);
+  }
+}

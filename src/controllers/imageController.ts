@@ -4,7 +4,7 @@ import multer from "multer";
 import path from "path";
 import { promisify } from "util";
 import { isValidImageType, validateInputs } from "../utils/imageValidator";
-import { resizeImageFnc } from "../utils/imageFunctions";
+import { resizeImageFnc,cropImageFnc } from "../utils/imageFunctions";
 import errorHandler from "../utils/errorHandler";
 import fs from "fs";
 import sharp from "sharp";
@@ -66,7 +66,7 @@ const getImageList = async (
     res.render("index", { images: imageFiles });
   } catch (err) {
     console.error("Error reading images:", err);
-    next(err);
+    errorHandler(err,req, res);
   }
 };
 
@@ -85,11 +85,37 @@ const resizeImage = async (req: Request, res: Response, next: NextFunction) => {
   }
   const imagePath = path.join(__dirname, "..", "../public", "data", imageName);
   try {
-    resizeImageFnc(imagePath, width, height);
+    resizeImageFnc(imagePath, parseInt(width), parseInt(height));
     res.status(200).send("Image resized successfully");
   } catch (err) {
     console.error("Error cropping image");
-    next(err);
+    errorHandler(err,req, res);
   }
 };
-export { uploadImage, handleFile, getImageList, resizeImage, renderResizeForm };
+
+const renderCropForm = (req: Request, res: Response) => {
+  const { imageName } = req.params;
+  res.render("cropForm", { imageName });
+};
+
+const cropImage = async (req, res) => {
+  const { imageName } = req.params;
+  const { x, y, width, height } = req.body;
+
+  const validationError = validateInputs(imageName, width, height);
+  if (validationError) {
+    return res.status(400).send(validationError);
+  }
+
+  const imagePath = path.join(__dirname, "..", "../public", "data", imageName);
+
+  try {
+    cropImageFnc(imagePath,parseInt(width), parseInt(height),parseInt(x),parseInt(y))
+      res.status(200).send('Image cropped successfully!');
+  } catch (err) {
+      console.error('Error cropping image:', err);
+      errorHandler(err,req, res);
+    }
+}
+
+export { uploadImage, handleFile, getImageList, resizeImage, renderResizeForm, renderCropForm, cropImage };
