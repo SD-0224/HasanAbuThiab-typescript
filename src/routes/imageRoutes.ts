@@ -32,3 +32,4 @@ router.put("/grey/:imageName", applyGreyScale)
 router.post("/upload", uploadImage, handleFile);
 
 export default router;
+

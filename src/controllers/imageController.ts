@@ -5,7 +5,6 @@ import path from "path";
 import { promisify } from "util";
 import { isValidImageType, validateInputs } from "../utils/imageValidator";
 import { resizeImageFnc, cropImageFnc,applyWatermark } from "../utils/imageFunctions";
-import errorHandler from "../utils/errorHandler";
 import fs from "fs";
 import sharp from "sharp";
 
