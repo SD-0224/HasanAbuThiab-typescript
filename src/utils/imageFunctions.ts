@@ -36,7 +36,7 @@ async function cropImageFnc(
       .toBuffer();
     await fs.promises.writeFile(imagePath, croppedImageBuffer);
   } catch (error) {
-    console.error("Error resizing image:", error);
+    console.error("Error cropping image:", error);
     throw error;
   }
 }

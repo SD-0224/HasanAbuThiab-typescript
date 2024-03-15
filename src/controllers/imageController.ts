@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import multer from "multer";
 import path from "path";
 import { promisify } from "util";
-import { isValidImageType, validateInputs } from "../utils/imageValidator";
+import { isValidImageType, validateInputs, validateCropInputs } from "../utils/imageValidator";
 import { resizeImageFnc, cropImageFnc,applyWatermark } from "../utils/imageFunctions";
 import fs from "fs";
 import sharp from "sharp";
@@ -42,7 +42,7 @@ const handleFile = async (req: Request, res: Response): Promise<void> => {
     );
 
     await writeFileAsync(imagePath, req.file.buffer);
-    res.redirect("/");
+    res.status(302).redirect("/");
   } catch (err) {
     console.error(err);
     throw err;
@@ -68,13 +68,13 @@ const renderResizeForm = (req: Request, res: Response) => {
   res.render("resizeForm", { imageName });
 };
 
-const resizeImage = async (req: Request, res: Response): Promise<void> => {
+const resizeImage = async (req: Request, res: Response) => {
   const { imageName } = req.params;
   const { width, height } = req.body;
-  const validationError = validateInputs(imageName, width, height);
+  const validationError = await validateInputs(imageName, width, height);
   if (validationError) {
     console.log(validationError);
-    return res.status(400).render("resizeForm", { error: validationError });
+    return res.status(400).send( validationError );
   }
   const imagePath = path.join(__dirname, "..", "../public", "data", imageName);
   try {
@@ -95,8 +95,10 @@ const cropImage = async (req: Request, res: Response) => {
   const { imageName } = req.params;
   const { x, y, width, height } = req.body;
 
-  const validationError = validateInputs(imageName, width, height);
+  const validationError = await validateCropInputs(imageName, x,y,width, height);
   if (validationError) {
+    console.log(validationError);
+
     return res.status(400).send(validationError);
   }
 
@@ -110,7 +112,7 @@ const cropImage = async (req: Request, res: Response) => {
       parseInt(x),
       parseInt(y)
     );
-    res.status(200).send("Image cropped successfully!");
+    res.sendStatus(200);
   } catch (err) {
     console.error("Error cropping image:", err);
     throw err;
@@ -128,23 +130,26 @@ const waterMarkImage = async (req: Request, res: Response): Promise<void> => {
   try {
     await fs.promises.access(imagePath, fs.constants.F_OK);
   } catch (error) {
-    return res.status(400).send({error:"Image file does not exist."});
+
+     res.status(400).send({error:"Image file does not exist."});
   }
 
   try {
     if (!req.file) {
-      return res
+       res
         .status(400).send({ error: "No file uploaded." });
     }
 
     // Validate file type
-    if (!isValidImageType(req.file.mimetype)) {
-      return res.status(400).send({ error: "File type not valid." });
+    else
+  {if (!isValidImageType(req.file.mimetype)) {
+       res.status(400).send({ error: "File type not valid." });
     }
     
       await applyWatermark(imagePath, req.file.buffer);
 
-      res.redirect('/');
+      res.status(302).redirect("/");
+    }
   } catch (err) {
       console.error("Error in watermarkController:", err);
       throw err;
@@ -173,7 +178,7 @@ const applyGreyScale = async(req:Request, res:Response) => {
         .toBuffer();
     // Write the greyscaled image buffer back to the original file
     await fs.promises.writeFile(imagePath, greyscaleImageBuffer);
-    res.status(200);
+    res.sendStatus(200);
   }
   catch (err) {
     console.error("Error in applyGreyScale:", err);
@@ -199,6 +204,7 @@ const downloadImage = async (req:Request, res:Response) => {
     // Create a readable stream from the file and pipe it to the response
     const fileStream = fs.createReadStream(imagePath);
     fileStream.pipe(res);
+    res.sendStatus(200);
   } catch (err) {
     console.error("Error downloading file:", err);
     throw err;

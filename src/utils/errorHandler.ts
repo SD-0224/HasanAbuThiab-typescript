@@ -1,11 +1,8 @@
-import multer from "multer";
 import { Response, NextFunction } from "express";
 
 const errorHandler = (
   err: any,
-  req: Request,
   res: Response,
-  next: NextFunction
 ) => {
   console.error(err.stack);
   let errorMessage: string;
@@ -43,7 +40,6 @@ const errorHandler = (
       res.status(500).json({ error: errorMessage });
       break;
   }
-  next();
 };
 
-export = errorHandler;
+export default errorHandler;

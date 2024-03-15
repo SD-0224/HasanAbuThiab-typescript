@@ -15,11 +15,14 @@ const isValidImageType = (mimeType: string): boolean => {
   return validator.isMimeType(mimeType, allowedTypes);
 };
 
-const validateInputs = (
+const  validateInputs = async (
   imageName: string,
   width: string,
   height: string
-): string | null => {
+): Promise<string | null> => {
+  width = String(width);
+  height = String(height);
+
   // Validate imageName
   if (!imageName) {
     return "Invalid image name.";
@@ -29,14 +32,19 @@ const validateInputs = (
   if (
     !width ||
     !height ||
-    !validator.isNumeric(width) ||
-    !validator.isNumeric(height) ||
-    !validator.isInt(width, { min: 100, max: 3000 }) ||
-    !validator.isInt(height, { min: 100, max: 3000 })
+    !validator.isNumeric(String(width)) ||
+    !validator.isNumeric(String(height)) ||
+    !validator.isInt(String(width), { min: 100, max: 3000 }) ||
+    !validator.isInt(String(height), { min: 100, max: 3000 })
   ) {
     return "Invalid width or height. Width and height should be numeric values between 100 and 3000.";
   }
-
+  const imagePath = path.join(__dirname, "..", "../public", "data", imageName);
+  try {
+    await fs.promises.access(imagePath, fs.constants.F_OK);
+  } catch (error) {
+    return "Image file does not exist.";
+  }
   return null;
 };
 
@@ -53,33 +61,40 @@ const validateCropInputs = async (
   }
 
   // Validate x and y coordinates
+  if (!x || !y || !width || !height) {
+    return "Coordinates (x, y, width, height) are missing.";
+  }
+
+  // Validate x and y coordinates
   if (
-    !x ||
-    !y ||
-    !validator.isNumeric(x) ||
-    !validator.isNumeric(y) ||
-    !validator.isInt(x) ||
-    !validator.isInt(y) ||
-    !validator.isPositive(parseFloat(x)) || // Check for positive x coordinate
-    !validator.isPositive(parseFloat(y)) // Check for positive y coordinate
+    !validator.isNumeric(String(x)) ||
+    !validator.isNumeric(String(y)) ||
+    !validator.isInt(String(x)) ||
+    !validator.isInt(String(y)) ||
+    parseFloat(x) <= 0 || // Check for positive x coordinate
+    parseFloat(y) <= 0    // Check for positive y coordinate
   ) {
     return "Invalid coordinates. Coordinates (x, y) should be positive numeric values.";
   }
 
+
   // Validate width and height
   if (
-    !width ||
-    !height ||
-    !validator.isNumeric(width) ||
-    !validator.isNumeric(height) ||
-    !validator.isInt(width) ||
-    !validator.isInt(height) ||
-    !validator.isInt(width, { min: 100, max: 3000 }) ||
-    !validator.isInt(height, { min: 100, max: 3000 })
+    !validator.isNumeric(String(height)) ||
+    !validator.isNumeric(String(width)) ||
+    !validator.isInt(String(width)) ||
+    !validator.isInt(String(height))
   ) {
     return "Invalid width or height. Width and height should be numeric integer values between 100 and 3000.";
   }
+  if (x + width > width) {
+    return "Cropping width exceeds image width";
+}
 
+// Check if y + height is within image height
+if (y + height > height) {
+  return "Cropping height exceeds image height";
+}
   // Check if the image file exists asynchronously
   const imagePath = path.join(__dirname, "..", "../public", "data", imageName);
   try {
