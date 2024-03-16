@@ -13,7 +13,7 @@ describe("Image Routes", () => {
   // Test for PUT /crop/:imageName
   it("PUT /crop/:imageName should return status 200 and crop the image", async () => {
     const imageName = "1710506038668-upload.png";
-    const requestBody = { x: "10", y: "10", width: "320", height: "220" };
+    const requestBody = { x: "10", y: "10", width: "220", height: "120" };
 
     const res = await request(app).put(`/crop/${imageName}`).send(requestBody);
     expect(res.status).toBe(200);
